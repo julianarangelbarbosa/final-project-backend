@@ -33,6 +33,9 @@ const bankStockSchema = new Schema(
     sector: {
       type: String,
     },
+    logo_stock: {
+      type: String,
+    },
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   },
   { timestamps: true }

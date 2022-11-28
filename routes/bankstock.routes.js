@@ -26,8 +26,14 @@ router.get("/bank/list", async (req, res, next) => {
 // POST adicionar banco novo
 router.post("/bank/create", async (req, res, next) => {
   try {
-    const { logo_bank, name_bank, description_bank, rate_bank, site_bank, youtube_bank } =
-      req.body;
+    const {
+      logo_bank,
+      name_bank,
+      description_bank,
+      rate_bank,
+      site_bank,
+      youtube_bank,
+    } = req.body;
     let newBank = await BankStock.create({
       logo_bank,
       name_bank,
@@ -61,18 +67,17 @@ router.get("/bank/:id", async (req, res, next) => {
 router.get("/stock/list", async (req, res, next) => {
   try {
     const allModels = await BankStock.find();
-  
-    const allStocks = await allModels.filter((model) => {
-      return model.stock;
-    });
 
-    res.status(200).json(allStocks);
+    /* const allStocks = await allModels.filter((model) => {
+      return model.stock;
+    }); */
+
+    res.status(200).json(allModels);
   } catch (error) {
     console.log(error);
     next(error);
   }
 });
-
 
 // // POST adicionar ação nova
 router.post("/stock/create", async (req, res, next) => {
@@ -86,8 +91,6 @@ router.post("/stock/create", async (req, res, next) => {
     res.json(error);
   }
 });
-
-
 
 // GET detalhes de 1 ação em especifico
 router.get("/stock/:id", async (req, res, next) => {
@@ -105,32 +108,31 @@ router.get("/stock/:id", async (req, res, next) => {
 
 // POST criar comentario tanto no banco como na stock
 router.post("/comment/:id", async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      /* const userId = req.payload._id */
-      const { description_comment, userId } = req.body;
-  
-      //Create the comment
-  
-      const newComment = await Comment.create({
-        description_comment,
-        userId,
-        bankStockId: id,
-      });
-  
-      await BankStock.findByIdAndUpdate(id, {
-        $push: { comments: newComment._id },
-      });
-  
-      await User.findByIdAndUpdate(userId, {
-        $push: { comments: newComment._id },
-      });
-  
-      res.status(201).json(newComment);
-    } catch (error) {
-      next(error);
-    }
-  });
+  try {
+    const { id } = req.params;
+    /* const userId = req.payload._id */
+    const { description_comment, userId } = req.body;
 
+    //Create the comment
+
+    const newComment = await Comment.create({
+      description_comment,
+      userId,
+      bankStockId: id,
+    });
+
+    await BankStock.findByIdAndUpdate(id, {
+      $push: { comments: newComment._id },
+    });
+
+    await User.findByIdAndUpdate(userId, {
+      $push: { comments: newComment._id },
+    });
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
