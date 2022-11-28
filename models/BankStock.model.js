@@ -2,6 +2,9 @@ const { Schema, model } = require("mongoose");
 
 const bankStockSchema = new Schema(
   {
+    logo_bank: {
+      type: String,
+    },
     name_bank: {
       type: String,
       require: true,

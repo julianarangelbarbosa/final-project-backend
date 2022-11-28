@@ -26,9 +26,10 @@ router.get("/bank/list", async (req, res, next) => {
 // POST adicionar banco novo
 router.post("/bank/create", async (req, res, next) => {
   try {
-    const { name_bank, description_bank, rate_bank, site_bank, youtube_bank } =
+    const { logo_bank, name_bank, description_bank, rate_bank, site_bank, youtube_bank } =
       req.body;
     let newBank = await BankStock.create({
+      logo_bank,
       name_bank,
       description_bank,
       rate_bank,
