@@ -3,7 +3,7 @@ const router = express.Router();
 
 // ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // ℹ️ Handles password encryption
 const jwt = require("jsonwebtoken");
@@ -17,9 +17,19 @@ const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 // How many rounds should bcrypt run the salt (default - 10 rounds)
 const saltRounds = 10;
 
+// GET  /auth/verify  -  Used to verify JWT stored on the client
+router.get("/verify", isAuthenticated, (req, res) => {
+  // If JWT token is valid the payload gets decoded by the
+  // isAuthenticated middleware and is made available on `req.payload`
+  console.log(`req.payload`, req.payload);
+
+  // Send back the token payload object containing the user data
+  res.status(200).json(req.payload);
+});
+
 // POST /auth/signup  - Creates a new user in the database
 router.post("/signup", (req, res, next) => {
-  const { email, password, username} = req.body;
+  const { email, password, username } = req.body;
 
   // Check if email or password are provided as empty strings
   if (email === "" || password === "" || username === "") {
@@ -117,16 +127,6 @@ router.post("/login", (req, res, next) => {
       }
     })
     .catch((err) => next(err)); // In this case, we send error handling to the error handling middleware.
-});
-
-// GET  /auth/verify  -  Used to verify JWT stored on the client
-router.get("/verify", isAuthenticated, (req, res, next) => {
-  // If JWT token is valid the payload gets decoded by the
-  // isAuthenticated middleware and is made available on `req.payload`
-  console.log(`req.payload`, req.payload);
-
-  // Send back the token payload object containing the user data
-  res.status(200).json(req.payload);
 });
 
 module.exports = router;

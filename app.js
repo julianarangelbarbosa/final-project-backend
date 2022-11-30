@@ -19,14 +19,14 @@ const indexRoutes = require("./routes/index.routes");
 app.use("/", indexRoutes);
 
 const authRoutes = require("./routes/auth.routes");
-app.use("/api", authRoutes);
+app.use("/", authRoutes);
 
 // By passing the middleware on the whole file, every route inside becomes protected
 const projectRoutes = require("./routes/bankstock.routes");
-app.use("/api", projectRoutes);
+app.use("/", projectRoutes);
 
 const userTotal = require("./routes/user.routes");
-app.use("/api", userTotal);
+app.use("/", userTotal);
 
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);

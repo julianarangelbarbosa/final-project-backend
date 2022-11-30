@@ -2,7 +2,6 @@ const router = require("express").Router();
 const BankStock = require("../models/BankStock.model");
 const Comment = require("../models/Comment.model");
 const User = require("../models/User.model");
-
 ///// Metodos relacionados a lista de bancos ///////
 
 // GET Lista de todos os bancos
@@ -13,8 +12,6 @@ router.get("/bank/list", async (req, res, next) => {
     const allBanks = await allModels.filter((model) => {
       return model.name_bank;
     });
-
-    console.log(allBanks);
 
     res.status(200).json(allBanks);
   } catch (error) {
@@ -107,30 +104,56 @@ router.get("/stock/:id", async (req, res, next) => {
 ///// Metodos relacionados tanto a lista de bancos como ações ///////
 
 // POST criar comentario tanto no banco como na stock
-router.post("/comment/:id", async (req, res, next) => {
+router.post("/comment/:id/:userId", async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id, userId } = req.params;
+
     /* const userId = req.payload._id */
-    const { description_comment, userId } = req.body;
-
+    const { description_comment } = req.body;
+    let newComment;
+    let bankUpdated;
     //Create the comment
+    if (id == "undefined") {
+      newComment = await Comment.create({
+        description_comment,
+        userId,
+      });
+    } else {
+      newComment = await Comment.create({
+        description_comment,
+        userId,
+        bankStockId: id,
+      });
 
-    const newComment = await Comment.create({
-      description_comment,
-      userId,
-      bankStockId: id,
+      bankUpdated = await BankStock.findByIdAndUpdate(id, {
+        $push: { comments: newResult._id },
+      });
+    }
+
+    const newResult = await Comment.findById(newComment._id);
+
+    const userUpdated = await User.findByIdAndUpdate(userId, {
+      $push: { comments: newResult._id },
     });
-
-    await BankStock.findByIdAndUpdate(id, {
-      $push: { comments: newComment._id },
-    });
-
-    await User.findByIdAndUpdate(userId, {
-      $push: { comments: newComment._id },
-    });
-
-    res.status(201).json(newComment);
+    console.log(userUpdated);
+    res.status(201).json(bankUpdated);
   } catch (error) {
+    next(error);
+  }
+});
+
+// GET News
+router.get("/news/list", async (req, res, next) => {
+  try {
+    const allModels = await BankStock.find();
+
+    const allBanks = await allModels.filter((model) => {
+      return model.name_bank;
+    });
+
+    res.status(200).json(allBanks);
+  } catch (error) {
+    console.log(error);
     next(error);
   }
 });
