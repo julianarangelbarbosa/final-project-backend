@@ -126,19 +126,32 @@ router.post("/comment/:id/:userId", async (req, res, next) => {
       });
 
       bankUpdated = await BankStock.findByIdAndUpdate(id, {
-        $push: { comments: newResult._id },
+        $push: { comments: newComment._id },
       });
     }
-
     const newResult = await Comment.findById(newComment._id);
 
     const userUpdated = await User.findByIdAndUpdate(userId, {
       $push: { comments: newResult._id },
     });
+
     console.log(userUpdated);
     res.status(201).json(bankUpdated);
   } catch (error) {
     next(error);
+  }
+});
+
+router.delete("/comment/:id/:userId", async (req, res, next) => {
+  const { id, userId } = req.params;
+  try {
+    Comment.findByIdAndRemove(id);
+    await User.findByIdAndUpdate(userId, {
+      $pull: { comments:id },
+    });
+    res.status(200).json({ message: `Comment ${id} deleted!` });
+  } catch (error) {
+    console.log(error);
   }
 });
 
@@ -158,4 +171,13 @@ router.get("/news/list", async (req, res, next) => {
   }
 });
 
+/* router.get("/banks/search", async (req, res, next) => {
+  const { query } = req.body;
+  try {
+    const allBanks = await BankStock.find();
+    res.status(200).json(allBanks);
+  } catch (error) {
+    console.log(error);
+  }
+}); */
 module.exports = router;
