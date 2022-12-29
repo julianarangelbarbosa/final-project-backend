@@ -4,7 +4,7 @@ Descrição do projeto: desenvolvimento e deploy de um site onde encontra inform
 
 Project description: development and deployment of a site where you can find information about banks and stocks traded on the São Paulo/Br stock exchange
 
-This project was React and API with [Visit the site](https://infomoneyproject.netlify.app).
+This project was JavaScript, React and API with [Visit the site](https://infomoneyproject.netlify.app).
 
 
 Check the site !!!!
